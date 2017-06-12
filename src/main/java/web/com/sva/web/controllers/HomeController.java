@@ -448,6 +448,7 @@ public class HomeController
     return "home/contentshowJing";
     }
     
+    @AuthPassport
     @RequestMapping(value = "/content2", method = {RequestMethod.GET})
     public String Contentshow2 (Model model)
     {

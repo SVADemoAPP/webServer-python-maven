@@ -23,7 +23,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sva.common.Util;
 import com.sva.dao.AccountDao;
-import com.sva.dao.CommonDao;
 import com.sva.dao.VisitDao;
 import com.sva.model.AccountModel;
 import com.sva.model.VisitModel;
@@ -36,8 +35,8 @@ public class AccountController
     private AccountDao dao;
     
     @Autowired
-    private VisitDao visDao; 
-    
+    private VisitDao visDao;   
+
     private static Logger log = Logger.getLogger(AccountController.class);
 
     @RequestMapping(value = "/login", method = {RequestMethod.GET})
@@ -58,7 +57,6 @@ public class AccountController
             @RequestParam("password") String password)
 
     {
-
         List<String> selMenuKey = new ArrayList<String>(10);
         List<String> storeides = new ArrayList<String>(10);
         if (username == "" || password == "")

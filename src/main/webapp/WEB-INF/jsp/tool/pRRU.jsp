@@ -124,7 +124,7 @@
 		                    <div class="control-group">
 		                        <label class="control-label" for="kValue">K值</label>
 		                          <div class="controls">
-		                          	<input datatype="sn" name ="kValue" id="kValue" value='200' errormsg="该值只能为正整数" nullmsg="该值不能为空">
+		                          	<input datatype="sn" name ="kValue" id="kValue" value='20' errormsg="该值只能为正整数" nullmsg="该值不能为空">
 		                          </div>
 		                   </div>
             	           <div class="control-group">
@@ -151,12 +151,6 @@
                         <label class="control-label" for="defaultDistance">模拟点间距</label>
                           <div class="controls">
                           	<input datatype="sn" name ="defaultDistance" id="defaultDistance" value='5' errormsg="该值只能为正整数" nullmsg="该值不能为空">
-                          </div>
-                   </div>
-                   <div class="control-group">
-                        <label class="control-label" for="defaultDistance">渗透距离</label>
-                          <div class="controls">
-                          	<input datatype="sn" name ="infiltration" id="infiltration" value='20' errormsg="该值只能为正整数" nullmsg="该值不能为空">
                           </div>
                    </div>
                    <div class="control-group">

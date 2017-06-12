@@ -43,6 +43,8 @@ public class PrruController {
 
 	private static final String SIMULATE = "simulate";
 	
+	private static final BigDecimal VALUE = new BigDecimal(30);
+
 	private static final BigDecimal ZERO = new BigDecimal(0);
 	@Autowired
 	private PrruDao dao;
@@ -115,17 +117,16 @@ public class PrruController {
 	public String saveData(@RequestParam(value = "file", required = false) MultipartFile file,
 			HttpServletRequest request, PrruModel msgMngModel, ModelMap model,
 			@RequestParam("floor") String floorNo, @RequestParam("defaultDistance") String defaultDistance,
-			@RequestParam("kValue") String kValue, @RequestParam("height") String height,
-			@RequestParam("infiltration") String infiltration) {
+			@RequestParam("kValue") String kValue, @RequestParam("height") String height) {
 	    logger.debug("in");
 		String fileName = file.getOriginalFilename();
 		String path = request.getSession().getServletContext().getRealPath("/WEB-INF/upload");
 		File targetFile = new File(path, fileName);
 		List<PrruModel> str = null;
 		File f = null;
-		String eNodeBid = "";
+		String nu = "";
 		logger.debug("fileName"+fileName);
-		if (!fileName.isEmpty()) {
+		if (fileName != nu) {
 		    logger.debug("if2");
 			if (!targetFile.exists()) {
 				targetFile.mkdirs();
@@ -143,10 +144,10 @@ public class PrruController {
 				xml.init(f);
 				str = xml.getAttrVal(floorNo, msgMngModel.getPlaceId(), "//Project/Floors/Floor/NEs/NE", "id",
 						"name", "x", "y", "neCode", "cellId");
-				eNodeBid = str.get(0).geteNodeBid();
+				
 				int st = str.size();
 				if(st > 0){
-					dao.deleteInfo(msgMngModel.getFloorNo(),eNodeBid);
+					dao.deleteInfo(msgMngModel.getFloorNo(),str.get(0).geteNodeBid());
 					logger.debug("delete OK");
 				}
 				for (int i = 0; i < st; i++) {
@@ -167,28 +168,26 @@ public class PrruController {
 
 		// 根据楼层号从数据库查询地图信息
 		Collection<MapsModel> maps = mapDao.getMapDetail(floorNo);
-		if (maps.isEmpty() || eNodeBid.isEmpty()) {
-			logger.error("没有查到地图数据或没有加载prru文件");
-			return "redirect:/home/showpRRU";
-		}
-		List<PrruModel> prruInfo = dao.getPrruInfo(floorNo,eNodeBid);
-		if (prruInfo.isEmpty()) {
-			logger.error("没有查到Prru信息");
+		List<PrruModel> prruInfo = dao.getPrruInfo(floorNo);
+		String eNodeBid = prruInfo.get(0).geteNodeBid();
+		if (maps.isEmpty() || prruInfo.isEmpty()) {
+			logger.error("没有查到地图数据或Prru信息");
 			return "redirect:/home/showpRRU";
 		}
 	
 		// 删除掉该楼层之前模拟SRS计算的结果，保证数据唯一性
 		prruDao.delSimulateDataByFloorNo(floorNo,eNodeBid);
 		// 根据地图长、宽、原点及模拟点间隔等信息遍历获取模拟点
-		List<PrruFeatureModel> prruFeatureModelList = getPointList(maps.iterator().next(), defaultDistance, eNodeBid);
+		List<PrruFeatureModel> prruFeatureModelList = getPointList(maps.iterator().next(), defaultDistance,eNodeBid);
 		for(PrruModel prruModel : prruInfo){
-			calculation(prruFeatureModelList,floorNo,prruModel.geteNodeBid(),prruModel.getCellId(),defaultDistance,kValue,height,infiltration);
+			calculation(prruFeatureModelList,floorNo,prruModel.geteNodeBid(),prruModel.getCellId(),defaultDistance,kValue,height);
 		}
+		
+
 		return "redirect:/home/showpRRU";
 	}
 	
-	private void calculation(final List<PrruFeatureModel> prruFeatureModelList,String floorNo, String eNodeBid, String cellId,final String defaultDistance, 
-			final String kValue, final String height, final String infiltration){
+	private void calculation(final List<PrruFeatureModel> prruFeatureModelList,String floorNo, String eNodeBid, String cellId,final String defaultDistance, final String kValue, final String height){
 		final List<PrruModel> prruModelList = (List<PrruModel>) dao.getPrruInfoByflooNo(floorNo,eNodeBid,cellId);
 
 		if(prruModelList.isEmpty()){
@@ -201,7 +200,7 @@ public class PrruController {
 			@Override
 			public void run() {
 				// 计算并存储结果
-				calDistance(prruFeatureModelList, prruModelList, kValue, height, infiltration);
+				calDistance(prruFeatureModelList, prruModelList, kValue, height);
 
 			}
 		});
@@ -216,24 +215,31 @@ public class PrruController {
 	 * @param prruList
 	 */
 	private void calDistance(List<PrruFeatureModel> prruFeatureModelList, List<PrruModel> prruList,
-			String kValue, String height, String infiltration) {
+			String kValue, String height) {
 		BigDecimal x;
 		BigDecimal y;
 		BigDecimal z = new BigDecimal(height);
-		BigDecimal i = new BigDecimal(infiltration);
 		BigDecimal d;
 		boolean flag = false;
 		double distance;
-		double distanceRange = Math.sqrt(z.multiply(z).add(i.multiply(i)).doubleValue());
+		double distanceRange = Math.sqrt(z.multiply(z).add(VALUE.multiply(VALUE)).doubleValue());
 		List<PrruFeatureDetailModel> prruFeatureList = new ArrayList<PrruFeatureDetailModel>();
 		PrruFeatureDetailModel prruFeatureDetail;
 		for (PrruFeatureModel prruFeatureModel : prruFeatureModelList) {
+
 			for (PrruModel prruModel : prruList) {
 				// 计算距离x² + y² + z²= d²
 				x = new BigDecimal(prruFeatureModel.getX()).subtract(new BigDecimal(prruModel.getX()));
 				y = new BigDecimal(prruFeatureModel.getY()).subtract(new BigDecimal(prruModel.getY()));
 				d = (x.multiply(x)).add(y.multiply(y)).add(z.multiply(z));
 				distance = Math.sqrt(d.doubleValue());
+				// 判断是否在20²即400范围内
+				/*if (distance < Double.parseDouble(range)) {
+					prruFeatureDetail = new PrruFeatureDetailModel();
+					prruFeatureDetail.setGpp(prruModel.getNeCode());
+					prruFeatureDetail.setDistance(distance);
+					prruFeatureList.add(prruFeatureDetail);
+				}*/
 				prruFeatureDetail = new PrruFeatureDetailModel();
 				prruFeatureDetail.setGpp(prruModel.getNeCode());
 				prruFeatureDetail.setDistance(distance);
@@ -246,12 +252,11 @@ public class PrruController {
 			// 计算模拟RSRP
 			if (!prruFeatureList.isEmpty() && flag) {
 				calRSRP(prruFeatureList, kValue, prruFeatureModel);
+				prruFeatureList.clear();
 			}
-			prruFeatureList.clear();
-			flag = false;
 
 		}
-		System.out.println("模拟点计算完成");
+
 	}
 
 	/**
@@ -266,13 +271,7 @@ public class PrruController {
 		Collections.sort(prruFeatureList, new Comparator<PrruFeatureDetailModel>() {
 			@Override
 			public int compare(PrruFeatureDetailModel o1, PrruFeatureDetailModel o2) {
-				if(o1.getDistance() > o2.getDistance() ){
-					return 1;
-				}else if(o1.getDistance() < o2.getDistance() ){
-					return -1;
-				}else{
-					return 0;
-				}
+				return (int) (o1.getDistance() - o2.getDistance());
 			}
 		});
 		
@@ -331,12 +330,12 @@ public class PrruController {
 		String floorNo = map.getFloorNo().toString();
 		double width = map.getImgWidth() / Double.parseDouble(map.getScale());
 		double hight = map.getImgHeight() / Double.parseDouble(map.getScale());
-		for (Double x = 0.0; x <= width; x += defalutValue) {
-			for (Double y = 0.0; y <= hight; y += defalutValue) {
+		for (Double x = Double.parseDouble(map.getXo()); x <= width; x += defalutValue) {
+			for (Double y = Double.parseDouble(map.getYo()); y <= hight; y += defalutValue) {
 				prruModel = new PrruFeatureModel();
 				
-				prruModel.setX((x - Double.parseDouble(map.getXo())) + "");
-				prruModel.setY((y - Double.parseDouble(map.getYo())) + "");
+				prruModel.setX(x.toString());
+				prruModel.setY(y.toString());
 				
 				prruModel.setFloorNo(floorNo);
 				prruModel.setUserId(SIMULATE);

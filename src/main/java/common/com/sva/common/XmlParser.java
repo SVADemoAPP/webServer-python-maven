@@ -122,7 +122,7 @@ public class XmlParser
                 }
                 if (value.equals(necode))
                 {
-                    pm.setNeCode(eNodeBid + "__" + result);
+                    pm.setNeCode(eNodeBid + "_" + result);
                 }
                 if (value.equals(name))
                 {

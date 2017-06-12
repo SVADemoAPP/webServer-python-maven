@@ -158,7 +158,6 @@
                                                 <option value="IP">IP</option>
                                                 <option value="MAC">MAC</option>
                                                 <option value="MSISDN">MSISDN</option>
-                                                <option value="ACR">ACR</option>                                                
                                             </select>                
                                         </div>
                                     </div>

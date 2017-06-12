@@ -115,7 +115,7 @@ public class HttpUtil
 
         // 写入参数
         DataOutputStream out = new DataOutputStream(con.getOutputStream());
-        out.write(content.getBytes(charset));
+        out.write(content.getBytes("UTF-8"));
         out.flush();
         out.close();
         // 接受响应并返回
@@ -130,7 +130,7 @@ public class HttpUtil
                 outStream.write(buffer, 0, len);
             }
             is.close();
-            result = outStream.toString(charset);
+            result = outStream.toString();
             Log.debug(result);
         }
         String token = con.getHeaderField("X-Subject-Token");

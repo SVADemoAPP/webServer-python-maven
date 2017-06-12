@@ -27,7 +27,6 @@ public class LocationModel
     private String yo;
 
     private String scale;
-    
 
     /**
      * @return the timestampPrru

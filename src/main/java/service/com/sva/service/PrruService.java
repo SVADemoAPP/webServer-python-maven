@@ -444,7 +444,7 @@ public class PrruService {
                     LOG.debug("乘系数后半径："+dis);
                 }
                 // 如果特征点是上上一个定位点，特征半径要乘以大于1的系数correction
-                else if(x1 != null && y1 != null && new BigDecimal(featureModel.getX()).compareTo(new BigDecimal(x1)) == 0 
+                else if(new BigDecimal(featureModel.getX()).compareTo(new BigDecimal(x1)) == 0 
                         && new BigDecimal(featureModel.getY()).compareTo(new BigDecimal(y1)) == 0 
                         && new BigDecimal(featureModel.getFloorNo()).compareTo(new BigDecimal(floorNo)) == 0){
                     LOG.debug("找到上上一个定位点：x1-"+x1+",y1-"+y1+",z-"+floorNo+"。原半径："+dis);
@@ -637,14 +637,15 @@ public class PrruService {
         // 对入参重新赋值
         signals.clear();
         gpps.clear();
-        List<PrruSignalModel> tempList = new ArrayList<PrruSignalModel>();
+        //List<PrruSignalModel> tempList = new ArrayList<PrruSignalModel>();
         Iterator<Entry<String, PrruSignalModel>> itModel = temp.entrySet().iterator();  
         while(itModel.hasNext()){
             Entry<String,PrruSignalModel> entity = itModel.next();
-            //gpps.add(entity.getKey());
-            tempList.add(entity.getValue());
+            //tempList.add(entity.getValue());
+            gpps.add(entity.getKey());
+            signals.add(entity.getValue());
         }
-        
+        /* 测试算法
         // 按gpp从高到低排序
         Collections.sort(tempList, new Comparator<PrruSignalModel>() {  
             public int compare(PrruSignalModel d1,  
@@ -666,6 +667,7 @@ public class PrruService {
             signals.add(tempList.get(i));
             gpps.add(tempList.get(i).getGpp());
         }
+        */
         LOG.debug("final rsrp:"+signals.toString());
     }
     

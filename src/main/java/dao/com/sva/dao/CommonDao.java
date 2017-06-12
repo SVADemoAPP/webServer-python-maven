@@ -52,11 +52,10 @@ public class CommonDao
                 + "enbid VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',"
                 + "INDEX `Index 1` (`userID`), "
                 + "INDEX `Index 2` (`timestamp`) "
-                + ")COLLATE='utf8_unicode_ci' ENGINE=MyISAM;";
+                + ")COLLATE='utf8_unicode_ci' ENGINE=InnoDB;";
 
         try
         {
-            log.debug("createTable sql:"+sql);
             jdbcTemplate.update(sql);
             return 1;
         }

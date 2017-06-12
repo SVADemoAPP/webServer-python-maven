@@ -35,11 +35,11 @@ public class PrruDao
         return this.jdbcTemplate.query(sql, params, new pRRUMapper());
     }
     
-    public List<PrruModel> getPrruInfo(String floorNo, String eNodeBid)
+    public List<PrruModel> getPrruInfo(String floorNo)
     {
     	
-        String sql = "select DISTINCT eNodeBid,cellId from prru where floorNo=? and eNodeBid=?";
-        String[] params = {floorNo, eNodeBid};
+        String sql = "select DISTINCT eNodeBid,cellId from prru where floorNo=?";
+        String[] params = {floorNo};
         return this.jdbcTemplate.query(sql, params, new pRRUInfoMapper());
     }
 

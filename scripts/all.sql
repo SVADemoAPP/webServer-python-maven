@@ -433,6 +433,7 @@ INSERT INTO `menuenglish` (`id`, `keyEN`, `name`) VALUES
 	(5, 'key_sellerInfo', 'Seller Management'),
 	(6, 'key_areaCategory', ' Regional category management '),
 	(7, 'key_areaInfo', 'Regional information input'),
+	(8, 'key_customerHeamap', 'Customer Heatmap'),
 	(9, 'key_customerPeriodHeamap', 'Customer Heatmap in Period'),
 	(10,'key_customerScattermap', 'Customer Scattermap'),
 	(11,'key_historicalTrack', 'Historical Track'),
@@ -448,6 +449,7 @@ INSERT INTO `menuenglish` (`id`, `keyEN`, `name`) VALUES
 	(21, 'key_role', 'Role management'),
 	(22, 'key_paramConfig', 'Parameter configuration '),
 	(23, 'key_account', 'Rights management'),
+	(24, 'key_allShow', 'Global overview'),
 	(25, 'key_dynamicAccuyacy', 'Dynamic accuracy test'),
 	(26, 'key_staticAccuyacy', 'Static accuracy test'),
 	(27, 'key_positionlatency', ' Position latency'),
@@ -474,6 +476,7 @@ INSERT INTO `menuname` (`id`, `keyZH`, `name`) VALUES
 	(5, 'key_sellerInfo', '商户信息管理'),
 	(6, 'key_areaCategory', '区域类别管理'),
 	(7, 'key_areaInfo', '区域信息录入'),
+	(8, 'key_customerHeamap', '客流实时热力图'),
 	(9, 'key_customerPeriodHeamap', '时间段客流热力图'),
 	(10, 'key_customerScattermap', '客流实时散点图'),
 	(11, 'key_historicalTrack', '历史轨迹'),
@@ -489,6 +492,7 @@ INSERT INTO `menuname` (`id`, `keyZH`, `name`) VALUES
 	(21, 'key_role', '角色管理'),
 	(22, 'key_account', '权限管理'),
 	(23, 'key_paramConfig', '参数配置'),
+	(24, 'key_allShow', '全局概览'),
 	(25, 'key_dynamicAccuyacy', '动态精度测试'),
 	(26, 'key_staticAccuyacy', '静态精度测试'),
 	(27, 'key_positionlatency', '定位延时'),
@@ -739,12 +743,12 @@ CREATE TABLE IF NOT EXISTS `staticaccuracy` (
   `destination` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `start_date` datetime NOT NULL,
   `end_date` datetime NOT NULL,
-  `avgeOffset` decimal(10,2) NOT NULL,
+  `avgeOffset` decimal(10,0) NOT NULL,
   `maxOffset` decimal(10,2) NOT NULL,
   `staicAccuracy` decimal(10,2) NOT NULL,
   `offsetCenter` decimal(10,2) NOT NULL,
   `offsetNumber` decimal(10,2) NOT NULL,
-  `stability` decimal(10,2) NOT NULL,
+  `stability` decimal(10,0) NOT NULL,
   `count_3` int(11) NOT NULL,
   `count_5` int(11) NOT NULL,
   `count_10` int(11) NOT NULL,
@@ -1080,5 +1084,6 @@ CREATE TABLE `info_cgi_mapper` (
 COMMENT='获取定位信息表'
 COLLATE='latin1_swedish_ci'
 ENGINE=InnoDB;
+
 
 

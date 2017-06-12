@@ -3,8 +3,6 @@ package com.sva.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -29,54 +27,6 @@ public class ParamDao
     {
         String sql = "SELECT * FROM param";
         return this.jdbcTemplate.query(sql, new ParamMapper());
-    }
-    
-    public List<Map<String, Object>> findIp(String ip)
-    {
-      String sql = "SELECT iosCount,androidCount,webCount from website_visit where ip=? limit 1";
-      String[] params = { ip };
-      return this.jdbcTemplate.queryForList(sql, params);
-    }
-
-    public List<Map<String, Object>> getAllData() {
-      String sql = "SELECT iosCount,androidCount,webCount from website_visit ";
-      return this.jdbcTemplate.queryForList(sql);
-    }
-
-    public void updateAdrCount(String ip, int count)
-    {
-      String sql = "update website_visit set androidCount = ? where ip=?";
-      this.jdbcTemplate.update(sql, new Object[] { count, ip });
-    }
-
-    public void updateWebCount(String ip, int count)
-    {
-      String sql = "update website_visit set webCount = ? where ip=?";
-      this.jdbcTemplate.update(sql, new Object[] {count, ip });
-    }
-
-    public void updateIosCount(String ip, int count)
-    {
-      String sql = "update website_visit set iosCount = ? where ip=?";
-      this.jdbcTemplate.update(sql, new Object[] { count, ip });
-    }
-
-    public void saveAdrCount(String ip, int count, long time)
-    {
-      String sql = "insert into website_visit(androidCount,ip,first_visitTime) values(?,?,?)";
-      this.jdbcTemplate.update(sql, new Object[] { count, ip, time });
-    }
-
-    public void saveWebCount(String ip, int count, long time)
-    {
-      String sql = "insert into website_visit(webCount,ip,first_visitTime) values(?,?,?)";
-      this.jdbcTemplate.update(sql, new Object[] { count, ip,time });
-    }
-
-    public void saveIosCount(String ip, int count, long time)
-    {
-      String sql = "insert into website_visit(iosCount,ip,first_visitTime) values(?,?,?)";
-      this.jdbcTemplate.update(sql, new Object[] { count, ip,time });
     }
 
     // 查询参数更新时间，用于判断是时间是都变化

@@ -87,9 +87,7 @@ class GetSvaData():
                             if len(jsonList[index]["userid"]) < 1:
                                 continue
                             userid = jsonList[index]["userid"][0]   
-                            x1 = jsonList[index]["filterlocation"]["x"]
-                            y1 = jsonList[index]["filterlocation"]["y"] 
-                            sqlparam = [IdType,Timestamp,datatype,x,y,z,userid,x1,y1]
+                            sqlparam = [IdType,Timestamp,datatype,x,y,z,userid]                       
                             LOG.info(sqlparam)
                             time_begin = Timestamp       
                             loc_count= 1       
@@ -98,11 +96,11 @@ class GetSvaData():
                             cursor.execute ("select loc_count, time_begin,timestamp,userid  from locationPhone where userid=%s",[userid])  
                             row = cursor.fetchone ()
                             if row != None:
-                                sqlparam = [IdType,Timestamp,time_local,datatype,x,y,x1,y1,z,userid] 
-                                cursor.execute("update locationphone set IdType=%s, Timestamp = %s,time_local= %s,datatype= %s,x=%s, y =%s,x1 =%s,y1 =%s, z = %s where userid = %s",sqlparam)
+                                sqlparam = [IdType,Timestamp,time_local,datatype,x,y,z,userid] 
+                                cursor.execute("update locationphone set IdType=%s, Timestamp = %s,time_local= %s,datatype= %s,x=%s, y =%s, z = %s where userid = %s",sqlparam)
                             else:
-                                sqlparam = [IdType,Timestamp,time_begin,time_local,loc_count,during,datatype,x,y,x1,y1,z,userid] 
-                                cursor.execute("replace into locationPhone (IdType,Timestamp,time_begin,time_local,loc_count,during,datatype,x,y,x1,y1,z,userid) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",sqlparam)
+                                sqlparam = [IdType,Timestamp,time_begin,time_local,loc_count,during,datatype,x,y,z,userid] 
+                                cursor.execute("replace into locationPhone (IdType,Timestamp,time_begin,time_local,loc_count,during,datatype,x,y,z,userid) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",sqlparam)
                             #cursor.execute("replace into locationPhone (IdType,Timestamp,datatype,x,y,z,userid) values (%s,%s,%s,%s,%s,%s,%s)",sqlparam)
                     if jsonData.keys()[0] == 'locationstreamanonymous':
                         jsonList = jsonData["locationstreamanonymous"]
