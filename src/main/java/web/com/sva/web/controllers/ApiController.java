@@ -21,6 +21,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.util.HSSFColor.AQUA;
 import org.codehaus.jackson.map.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -181,9 +182,8 @@ public class ApiController
         List<GeofencingModel> list2 = new ArrayList<GeofencingModel>();
         List<LocationModel> list = new ArrayList<LocationModel>(10);
         String ip = ConvertUtil.convertMacOrIp(requestModel.getIp());
-        Collection<LocationModel> ResultList = new ArrayList<LocationModel>(10);
-        ResultList = dao.queryLocationByUseId(ip);
-        log.debug("dao result size:"+ResultList.size());
+        Collection<LocationModel> resultList= new ArrayList<LocationModel>(10);
+        resultList= dao.queryLocationByUseId(ip);
         // 查询参数更新的时间
         long paramUpdate = 0;
         // 查询参数更新的时间
@@ -197,14 +197,14 @@ public class ApiController
             paramUpdate = paramModel.getUpdateTime();
         }
 
-        for (LocationModel l : ResultList)
+        for (LocationModel l : resultList)
         {
             list.add(l);
         }
 
         Map<String, Object> modelMap = new HashMap<String, Object>(3);
         // long time = System.currentTimeMillis() - 60 * 1000;
-        if (ResultList.size() >= 1)
+        if (resultList.size() >= 1)
         {
             LocationModel loc = list.get(0);
             // get message info
@@ -329,10 +329,9 @@ public class ApiController
             modelMap.put("message", outList1);
             modelMap.put("message1", outList2);
             modelMap.put("paramUpdateTime", paramUpdate);
-            log.debug("return location:" + loc.getX() + "," + loc.getY());
         }
         modelMap.put("geofencing", list2);
-        log.debug("return ok!");
+
         return modelMap;
     }
 
@@ -348,19 +347,19 @@ public class ApiController
         }
         String userId = ConvertUtil.convertMacOrIp(requestModel.getIp());
         List<LocationModel> list = new ArrayList<LocationModel>(10);
-        Collection<LocationModel> ResultList = new ArrayList<LocationModel>(10);
-        ResultList = dao.queryLocationByUseId(userId);
+        Collection<LocationModel> resultList= new ArrayList<LocationModel>(10);
+        resultList= dao.queryLocationByUseId(userId);
         // 查询参数更新的时间
         List<String> ticketList = new ArrayList<String>();
         int len = 0;
         String tikectPath = null;
-        for (LocationModel l : ResultList)
+        for (LocationModel l : resultList)
         {
             list.add(l);
         }
 
         Map<String, Object> modelMap = new HashMap<String, Object>(3);
-        if (ResultList.size() >= 1)
+        if (resultList.size() >= 1)
         {
             LocationModel loc = list.get(0);
             Collection<MessageModel> msgList1 = new ArrayList<MessageModel>(10);
@@ -444,15 +443,15 @@ public class ApiController
             return null;
         }
         List<LocationModel> list = new ArrayList<LocationModel>(10);
-        Collection<LocationModel> ResultList = new ArrayList<LocationModel>(10);
-        ResultList = dao.queryLocationByUseId(ip);
-        for (LocationModel l : ResultList)
+        Collection<LocationModel> resultList= new ArrayList<LocationModel>(10);
+        resultList= dao.queryLocationByUseId(ip);
+        for (LocationModel l : resultList)
         {
             list.add(l);
         }
 
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
-        if (ResultList.size() >= 1)
+        if (resultList.size() >= 1)
         {
             LocationModel loc = list.get(0);
             modelMap.put("error", null);
@@ -471,8 +470,7 @@ public class ApiController
     @ResponseBody
     public Map<String, Object> subscription(
             @RequestParam("storeId") String storeId,
-            @RequestParam("ip") String ip,
-            @RequestParam("mapId") String mapIds)
+            @RequestParam("ip") String ip)
     {
         Collection<SvaModel> svaList = svaDao.queryByStoreId(storeId);
         String token = null;
@@ -482,7 +480,6 @@ public class ApiController
         String charset = null;
         String content = null;
         String url = null;
-        String mapId = mapIds;
         try
         {
             for (SvaModel sva : svaList)
@@ -503,23 +500,12 @@ public class ApiController
                 // https://sva_server_ip:9001/enabler/catalog/locationstreamreg/json/v1.0
                 // anoymous subscribe url:
                 // https://sva_server_ip:9001/enabler/catalog/locationstreamanonymousreg/json/v1.0
-                if (!"null".equals(mapId)) {
-                    url = "https://" + sva.getIp() + ':' + sva.getTokenProt()
-                    + "/enabler/catalog/maptransformer/json/v1.0";
-                    content = "{\"APPID\":\"" + sva.getUsername()
-                    + "\",\"idType\":\"" + sva.getIdType()
-                    + "\",\"useridlist\":[\""
-                    + ConvertUtil.convertMacOrIp(ip.trim()) 
-                    + "\"],\"maplist\":[\""+mapId+"\"]}";
-                }else
-                {
-                    url = "https://" + sva.getIp() + ':' + sva.getTokenProt()
-                    + "/enabler/catalog/locationstreamreg/json/v1.0";
-                    content = "{\"APPID\":\"" + sva.getUsername()
-                    + "\",\"idType\":\"" + sva.getIdType()
-                    + "\",\"useridlist\":[\""
-                    + ConvertUtil.convertMacOrIp(ip.trim()) + "\"]}";
-                }
+                url = "https://" + sva.getIp() + ':' + sva.getTokenProt()
+                        + "/enabler/catalog/locationstreamreg/json/v1.0";
+                content = "{\"APPID\":\"" + sva.getUsername()
+                		+ "\",\"idType\":\"" + sva.getIdType()
+                        + "\",\"useridlist\":[\""
+                        + ConvertUtil.convertMacOrIp(ip) + "\"]}";
                 log.debug("from ip:" + ip + ",subscription url:" + url
                         + " content:" + content);
                 jsonStr = capi.subscription(url, content, token, "POST");
@@ -596,148 +582,6 @@ public class ApiController
                         + " content:" + content);
                 jsonStr = capi.subscription(url, content, token, "POST");
                 log.debug("subscription:" + jsonStr);
-            }
-        }
-        catch (KeyManagementException e)
-        {
-            // TODO Auto-generated catch block
-            result = false;
-            log.error("KeyManagementException.", e);
-        }
-        catch (NoSuchAlgorithmException e)
-        {
-            // TODO Auto-generated catch block
-            result = false;
-            log.error("NoSuchAlgorithmException.", e);
-        }
-        catch (IOException e)
-        {
-            // TODO Auto-generated catch block
-            result = false;
-            log.error("IOException.", e);
-        }
-        catch (Exception e)
-        {
-            // TODO Auto-generated catch block
-            result = false;
-            log.error("Exception.", e);
-        }
-
-        Map<String, Object> modelMap = new HashMap<String, Object>(2);
-        modelMap.put("error", null);
-        modelMap.put("data", result);
-        return modelMap;
-    }
-    
-    @RequestMapping(value = "/unSubscribePrru", method = {RequestMethod.POST})
-    @ResponseBody
-    public Map<String, Object> unSubscribePrru(
-            @RequestParam("storeId") String storeId,
-            @RequestParam("ip") String ip)
-    {
-        Collection<SvaModel> svaList = svaDao.queryByStoreId(storeId);
-        String token = null;
-        HttpUtil capi = null;
-        boolean result = true;
-        String jsonStr = null;
-        String charset = null;
-        String url = null;
-        String content = null;
-        try
-        {
-            for (SvaModel sva : svaList)
-            {
-                url = "https://" + sva.getIp() + ":"
-                        + sva.getTokenProt() + "/v3/auth/tokens";
-                content = "{\"auth\":{\"identity\":{\"methods\":[\"password\"],\"password\": {\"user\": {\"domain\": \"Api\",\"name\": \""
-                        + sva.getUsername()
-                        + "\",\"password\": \""
-                        + sva.getPassword() + "\"}}}}}";
-                charset = "UTF-8";
-                log.debug("unSubscribPrru--from ip:" + ip + ",getToken url:" + url);
-                capi = new HttpUtil();
-                token = capi.httpsPost(url, content, charset);
-                
-                url = "https://" + sva.getIp() + ":" + sva.getTokenProt()
-                        + "/enabler/catalog/networkinfounreg/json/v1.0";
-                content = "{\"APPID\":\"" + sva.getUsername()
-                + "\",\"infotype\":\"ransignal\",\"useridlist\":[\""
-                + ConvertUtil.convertMacOrIp(ip) + "\"]}";
-                log.debug("unSubscribPrru--subscription url:" + url
-                        + " content:" + content);
-                
-                jsonStr = capi.subscription(url, content, token, "DELETE");
-                log.debug("unsubscribePrru,jsonStr:" + jsonStr);
-            }
-        }
-        catch (KeyManagementException e)
-        {
-            // TODO Auto-generated catch block
-            result = false;
-            log.error("KeyManagementException.", e);
-        }
-        catch (NoSuchAlgorithmException e)
-        {
-            // TODO Auto-generated catch block
-            result = false;
-            log.error("NoSuchAlgorithmException.", e);
-        }
-        catch (IOException e)
-        {
-            // TODO Auto-generated catch block
-            result = false;
-            log.error("IOException.", e);
-        }
-        catch (Exception e)
-        {
-            // TODO Auto-generated catch block
-            result = false;
-            log.error("Exception.", e);
-        }
-
-        Map<String, Object> modelMap = new HashMap<String, Object>(2);
-        modelMap.put("error", null);
-        modelMap.put("data", result);
-        return modelMap;
-    }
-    
-    @RequestMapping(value = "/unSubscribePrruAll", method = {RequestMethod.GET})
-    @ResponseBody
-    public Map<String, Object> unSubscribePrruAll(
-            @RequestParam("storeId") String storeId)
-    {
-        Collection<SvaModel> svaList = svaDao.queryByStoreId(storeId);
-        String token = null;
-        HttpUtil capi = null;
-        boolean result = true;
-        String jsonStr = null;
-        String charset = null;
-        String url = null;
-        String content = null;
-        try
-        {
-            for (SvaModel sva : svaList)
-            {
-                url = "https://" + sva.getIp() + ":"
-                        + sva.getTokenProt() + "/v3/auth/tokens";
-                content = "{\"auth\":{\"identity\":{\"methods\":[\"password\"],\"password\": {\"user\": {\"domain\": \"Api\",\"name\": \""
-                        + sva.getUsername()
-                        + "\",\"password\": \""
-                        + sva.getPassword() + "\"}}}}}";
-                charset = "UTF-8";
-                log.debug("unSubscribPrruAll--getToken url:" + url);
-                capi = new HttpUtil();
-                token = capi.httpsPost(url, content, charset);
-                
-                url = "https://" + sva.getIp() + ":" + sva.getTokenProt()
-                        + "/enabler/catalog/networkinfounreg/json/v1.0";
-                content = "{\"APPID\":\"" + sva.getUsername()
-                + "\",\"infotype\":\"ransignal\",\"useridlist\":[]}";
-                log.debug("unSubscribPrruAll--subscription url:" + url
-                        + " content:" + content);
-                
-                jsonStr = capi.subscription(url, content, token, "DELETE");
-                log.debug("unsubscribePrruAll,jsonStr:" + jsonStr);
             }
         }
         catch (KeyManagementException e)
@@ -856,13 +700,13 @@ public class ApiController
         // list.add(mmm);
         // }
 
-        Collection<MapsModel> ResultList = null;
+        Collection<MapsModel> resultList= null;
         Collection<AreaModel> areaList = daoArea.doquery();
-        ResultList = daoMaps.doquery();
+        resultList= daoMaps.doquery();
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
 
         modelMap.put("error", null);
-        modelMap.put("data", ResultList);
+        modelMap.put("data", resultList);
         modelMap.put("areaData", areaList);
 
         return modelMap;
@@ -916,9 +760,9 @@ public class ApiController
     public Map<String, Object> getMapData(String model)
     {
         List<MapMngModel> list = new ArrayList<MapMngModel>(10);
-        Collection<MapsModel> ResultList = new ArrayList<MapsModel>(10);
+        Collection<MapsModel> resultList = new ArrayList<MapsModel>(10);
         MapMngModel mmm = null;
-        for (MapsModel l : ResultList)
+        for (MapsModel l : resultList)
         {
             mmm = new MapMngModel();
             mmm.setFloor(l.getFloor());
@@ -1039,11 +883,11 @@ public class ApiController
     public Map<String, Object> getSellerInfo(
             @RequestParam("floorNo") String floorNo)
     {
-        Collection<SellerModel> ResultList = new ArrayList<SellerModel>(10);
-        ResultList = daoSeller.getInfoByFloorNo(floorNo);
+        Collection<SellerModel> resultList= new ArrayList<SellerModel>(10);
+        resultList= daoSeller.getInfoByFloorNo(floorNo);
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
         modelMap.put("error", null);
-        modelMap.put("data", ResultList);
+        modelMap.put("data", resultList);
         return modelMap;
     }
 
@@ -1052,11 +896,11 @@ public class ApiController
     public Map<String, Object> getVipSellerInfo(
             @RequestParam("floorNo") String floorNo)
     {
-        Collection<SellerModel> ResultList = new ArrayList<SellerModel>(10);
-        ResultList = daoSeller.getVipByFloorNo(floorNo);
+        Collection<SellerModel> resultList= new ArrayList<SellerModel>(10);
+        resultList= daoSeller.getVipByFloorNo(floorNo);
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
         modelMap.put("error", null);
-        modelMap.put("data", ResultList);
+        modelMap.put("data", resultList);
         return modelMap;
     }
 
@@ -1115,29 +959,19 @@ public class ApiController
     public Map<String, Object> getPrruInfo(
             @RequestParam("floorNo") String floorNo)
     {
-        Collection<PrruModel> ResultList = new ArrayList<PrruModel>(10);
-        ResultList = prruDao.getPrruInfoByflooNo(floorNo,"","");
+        Collection<PrruModel> resultList= new ArrayList<PrruModel>(10);
+        resultList= prruDao.getPrruInfoByflooNo(floorNo);
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
         modelMap.put("error", null);
-        modelMap.put("data", ResultList);
+        modelMap.put("data", resultList);
         return modelMap;
     }
 
     @RequestMapping(value = "/getPrruSignal")
     @ResponseBody
-    public Map<String, Object> getPrruSignal( @RequestParam("ip") String ip)
+    public Map<String, Object> getPrruSignal()
     {
-        List<Map<String, Object>> svaList = null;
-        long time = System.currentTimeMillis()-60000;
-        log.debug("getPrruSignal ip:"+ip);
-        if (ip==null) {
-            return null;
-        }else
-        {
-           String userId = ConvertUtil.convertMacOrIp(ip);
-           svaList = prruDao.getSignal(time,userId);
-            
-        }
+        List<Map<String, Object>> svaList = prruDao.getSignal();
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
         modelMap.put("error", null);
         modelMap.put("data", svaList);
@@ -1176,10 +1010,10 @@ public class ApiController
     public Map<String, Object> getTableDataParam(String callbackparam)
     {
         log.info("ParamController:getTableData");
-        Collection<ParamModel> ResultList = daoParam.doquery();
+        Collection<ParamModel> resultList= daoParam.doquery();
         Map<String, Object> modelMap = new HashMap<String, Object>(2);
         modelMap.put("error", null);
-        modelMap.put("data", ResultList);
+        modelMap.put("data", resultList);
         return modelMap;
     }
 
@@ -1238,9 +1072,9 @@ public class ApiController
     {
 
         Map<String, Object> modelMap = new HashMap<String, Object>(3);
-        Collection<MessageModel> ResultList = new ArrayList<MessageModel>(10);
-        ResultList = daoMsg.getAllMessageData();
-        modelMap.put("data", ResultList);
+        Collection<MessageModel> resultList= new ArrayList<MessageModel>(10);
+        resultList= daoMsg.getAllMessageData();
+        modelMap.put("data", resultList);
 
         return modelMap;
     }
@@ -2044,7 +1878,7 @@ public class ApiController
 			coefficient = 1.0;
 		}
 
-		List<AreaModel> ResultList = daoArea.selectAeareBaShow(floorNo);
+		List<AreaModel> resultList= daoArea.selectAeareBaShow(floorNo);
 		List<Object> areaData = new ArrayList<Object>();
 		Map<String, Object> map = null;
 		Map<String, Object> allDataMap = new HashMap<String, Object>(2);
@@ -2070,10 +1904,10 @@ public class ApiController
 		Map<String, Object> allQuyu2 = null;
 		Map<String, Object> allQuyu3 = null;
 		
-		for (int i = 0; i < ResultList.size(); i++) {
+		for (int i = 0; i < resultList.size(); i++) {
 			int allSize = 0;
 			int size = 0;
-			String areaId = ResultList.get(i).getId();
+			String areaId = resultList.get(i).getId();
 			String times = null;
 			quyu = daoArea.getAverageTimeByAreaId1(areaId, bztime);
 			if (!quyu.isEmpty()) {
@@ -2082,7 +1916,7 @@ public class ApiController
 			}
 			size = daoArea.getBaShowVisitUser(areaId, String.valueOf(time));
 			map = new HashMap<String, Object>();
-			map.put("name", ResultList.get(i).getAreaName());
+			map.put("name", resultList.get(i).getAreaName());
 			map.put("current", Math.ceil(size * coefficient));
 			map.put("cumulative",Math.ceil(allSize * coefficient));
 			map.put("average", times);
@@ -2809,118 +2643,4 @@ public Map<String, Object> getShDateJing()
         return result;
         
     }
-    
-    @RequestMapping(value = "/getDataByFloorNo", method = {RequestMethod.GET})
-    @ResponseBody
-    public Map<String, Object> getDataByFloorNo(@RequestParam("floorNo") String floorNo,@RequestParam(value = "time", required = false) String times)
-    {
-        Calendar currentDate = new GregorianCalendar();
-        currentDate.set(Calendar.HOUR_OF_DAY, 0);
-        currentDate.set(Calendar.MINUTE, 0);
-        currentDate.set(Calendar.SECOND, 0);
-        String periodSel = null;
-        if (times==null) {
-            periodSel = "5";
-        }else
-        {
-            periodSel = times;
-        }
-        String floorNo1 = floorNo;
-
-        double coefficient = 1;
-        long bztime = 0;
-        String startTime = null;
-        long time = 0;
-
-
-        List<AreaModel> ResultList1 = daoArea.selectAeareBaShow(floorNo1);
-
-        long nowTime = System.currentTimeMillis()
-                - (Integer.parseInt(periodSel)+1) * 60 * 1000;
-        List<Object> areaData = new ArrayList<Object>();
-
-        List<Object> areaData1 = new ArrayList<Object>();
-        Map<String, Object> map = null;
-        Map<String, Object> allDataMap = new HashMap<String, Object>(2);
-
-        String visitDay = ConvertUtil.dateFormat(currentDate.getTime(),
-                "yyyy-MM-dd");
-        // 当前时间拼接
-            String startDate = visitDay + " " + "00:00:00";
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            try
-            {
-                bztime = sdf.parse(startDate).getTime();
-            }
-            catch (Exception e)
-            {
-                log.debug("Time zhuanhuan error!");
-            }
-        Map<String, Object> tquyu = null;
-        double allTime1 = 0;
-
-        long allTimes1 = 0; 
-
-        for (int i = 0; i < ResultList1.size(); i++)
-        {
-            Map<String, Object> quyu2 = null;
-            quyu2 = getAreaDate(areaData1, ResultList1.get(i).getId(),
-                    ResultList1.get(i).getAreaName(), visitDay, tquyu, map,
-                    nowTime, coefficient);
-            allTime1 = allTime1 +  Double.parseDouble(quyu2.get("average").toString());
-            allTimes1 = Long.parseLong(quyu2.get("allTime").toString())+allTimes1;
-            if (quyu2.size() != 0)
-            {
-                areaData.add(quyu2);
-            }
-        }
-
-
-        allDataMap.put("item", areaData);
-
-
-        int allUsers1 = 0;
-
-
-        int allLeiji1 = 0;
-
-        
-        double allUser1 = 0;
-
-        
-        
-        allLeiji1 = dao.queryHeatmap6(floorNo1).size();
-
-        
-        allUser1 = Math.ceil(allLeiji1 * coefficient);
-
-        
-        allUsers1 = (dao.queryHeatmap5(floorNo1, Integer.parseInt(periodSel))).size();
-
-        allDataMap.put("allTime1", allTime1);
-        DecimalFormat    df   = new DecimalFormat("######0.00");   
-        String avgAllTime1 = allUser1 == 0 ? "0.00" : df.format(allTimes1/60000.0/allUser1);
-
-
-        allDataMap.put("average", avgAllTime1);
-
-        allDataMap.put("user", Math.ceil(allUsers1 * coefficient));
-
-        allDataMap.put("allUser",allUser1);
-
-        return allDataMap;
-    }
-        //获取所有的地图信息
-        @RequestMapping(value = "/getAllFloorNo", method = {RequestMethod.GET})
-        @ResponseBody
-        public Map<String, Object> getAllFloorNo()
-        {
-            Map<String, Object> map = new HashMap<String, Object>(2);
-            Collection<MapsModel> model= null;
-            model = daoMaps.doquery();
-            map.put("data", model);
-            map.put("error", null);
-            return map;
-            
-        }
 }

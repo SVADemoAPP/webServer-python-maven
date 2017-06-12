@@ -30,7 +30,6 @@ import com.sva.dao.CommonDao;
 import com.sva.dao.LinemapDao;
 import com.sva.dao.MapsDao;
 import com.sva.dao.MessageDao;
-import com.sva.dao.PrruSignalDao;
 import com.sva.dao.StoreDao;
 import com.sva.model.AreaInputModel;
 import com.sva.model.AreaModel;
@@ -60,9 +59,6 @@ public class QuartzJob {
 
 	@Autowired
 	private LinemapDao linemapDao;
-	
-	@Autowired
-    private PrruSignalDao prruSignalDao;
 
 	@Value("${mysql.db}")
 	private String db;
@@ -952,12 +948,6 @@ public class QuartzJob {
 		System.out.println("end");
 	}
 	
-	/** 
-	 * @Title: deletePrruSignals 
-	 * @Description: 每天晚上删除当天的信号强度数据
-	 */
-	public void deletePrruSignals(){
-	    prruSignalDao.deleteSignal();
-	}
+	
 
 }

@@ -352,10 +352,6 @@ function clearinfo()
 {
 	$("#placeSel").val("");
 	$("#zSel").val("");
-	$("#kValue").val("200");
-	$("#defaultDistance").val("5");
-	$("#height").val("5");
-	$("#infiltration").val("20");
 	$("#idid").val("");
 	$("#textfield").val("");
 	$("#fileField").val("");

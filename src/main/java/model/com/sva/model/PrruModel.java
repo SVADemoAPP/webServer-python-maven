@@ -17,10 +17,6 @@ public class PrruModel
     private String floorNo;
 
     private int placeId;
-    
-    private String eNodeBid;
-    
-    private String cellId;
 
     public int getPlaceId()
     {
@@ -101,21 +97,5 @@ public class PrruModel
     {
         this.floorNo = floorNo;
     }
-
-	public String geteNodeBid() {
-		return eNodeBid;
-	}
-
-	public void seteNodeBid(String eNodeBid) {
-		this.eNodeBid = eNodeBid;
-	}
-
-	public String getCellId() {
-		return cellId;
-	}
-
-	public void setCellId(String cellId) {
-		this.cellId = cellId;
-	}
 
 }

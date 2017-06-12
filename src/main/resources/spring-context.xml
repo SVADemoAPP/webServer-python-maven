@@ -215,11 +215,6 @@
 			<ref bean="dataSource" />
 		</property>
 	</bean>
-	<bean id="prruSignalDao" class="com.sva.dao.PrruSignalDao">
-        <property name="dataSource">
-            <ref bean="dataSource" />
-        </property>
-    </bean>
 	<!-- 开启注解事务 只对当前配置文件有效 注解事务和下面的声明式事务只需选择其中一种，推荐用声明式事务 -->
 	<!-- <aop:aspectj-autoproxy expose-proxy="true"/> <tx:annotation-driven 
 		transaction-manager="h4TManager"/> -->

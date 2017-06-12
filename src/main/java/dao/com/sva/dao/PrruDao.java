@@ -23,44 +23,24 @@ public class PrruDao
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public Collection<PrruModel> getPrruInfoByflooNo(String floorNo, String eNodeBid, String cellId)
+    public Collection<PrruModel> getPrruInfoByflooNo(String floorNo)
     {
-    	
-        String sql = "SELECT * from pRRU where floorNo=? and eNodeBid=? and cellId=?";
-        String[] params = {floorNo,eNodeBid,cellId};
-        if(eNodeBid.isEmpty() && cellId.isEmpty()){
-        	sql = "SELECT * from pRRU where floorNo=?";
-        	params = new String[]{floorNo};
-        }
+        String sql = "SELECT * from pRRU where floorNo=?";
+        String[] params = {floorNo};
         return this.jdbcTemplate.query(sql, params, new pRRUMapper());
-    }
-    
-    public List<PrruModel> getPrruInfo(String floorNo, String eNodeBid)
-    {
-    	
-        String sql = "select DISTINCT eNodeBid,cellId from prru where floorNo=? and eNodeBid=?";
-        String[] params = {floorNo, eNodeBid};
-        return this.jdbcTemplate.query(sql, params, new pRRUInfoMapper());
     }
 
     public void saveInfo(PrruModel bm) throws SQLException
     {
-        String sql = "INSERT INTO pRRU(floorNo,x,y,pRRUid,name,placeId,neCode,cellId,eNodeBid) VALUES(?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO pRRU(floorNo,x,y,pRRUid,name,placeId,neCode) VALUES(?,?,?,?,?,?,?)";
         this.jdbcTemplate.update(sql, bm.getFloorNo(), bm.getX(), bm.getY(),
-                bm.getNeId(), bm.getNeName(), bm.getPlaceId(), bm.getNeCode(),bm.getCellId(), bm.geteNodeBid());
+                bm.getNeId(), bm.getNeName(), bm.getPlaceId(), bm.getNeCode());
     }
 
-    public void deleteInfo(String floorNo, String eNodeBid) throws SQLException
+    public void deleteInfo(String floorNo) throws SQLException
     {
-    	String sql = "delete from pRRU  where floorNo=? and eNodeBid=?";
-    	if(eNodeBid.isEmpty()){
-    		sql = "delete from pRRU  where floorNo=?";
-    		this.jdbcTemplate.update(sql, floorNo);
-    	}else {
-    		
-    		this.jdbcTemplate.update(sql, new Object[]{floorNo, eNodeBid});
-    	}
-        
+        String sql = "delete from pRRU  where floorNo=?";
+        this.jdbcTemplate.update(sql, floorNo);
     }
 
     public int checkByFloorNo(String floorNo, String id)
@@ -78,9 +58,9 @@ public class PrruDao
         this.jdbcTemplate.update(sql, params);
     }
 
-    public List<Map<String, Object>> getSignal(long time,String userId)
+    public List<Map<String, Object>> getSignal()
     {
-        String sql = "select * from prrusignal where timestamp = (select max(timestamp) from prrusignal where timestamp > "+time+" and userId = '"+userId+"');";
+        String sql = "select * from prrusignal;";
         return this.jdbcTemplate.queryForList(sql);
     }
 
@@ -96,19 +76,6 @@ public class PrruDao
             bm.setX(rs.getString("X"));
             bm.setY(rs.getString("Y"));
             bm.setPlaceId(rs.getInt("PLACEID"));
-            bm.setCellId(rs.getString("CELLID"));
-            bm.seteNodeBid(rs.getString("ENODEBID"));
-            return bm;
-        }
-    }
-    
-    private class pRRUInfoMapper implements RowMapper
-    {
-        public Object mapRow(ResultSet rs, int num) throws SQLException
-        {
-            PrruModel bm = new PrruModel();
-            bm.setCellId(rs.getString("CELLID"));
-            bm.seteNodeBid(rs.getString("ENODEBID"));
             return bm;
         }
     }

@@ -121,18 +121,9 @@ public class DownController
             // http://10.169.77.131:8081/sva/down/api/generrateQrcode
 
             String a = url.split("//")[1];
-            String ips = null;
-            String p = null;
-            String ports = null;
-            if (a.split(":").length>1) {
-                ips = a.split(":")[0];
-                p = a.split(":")[1];
-                ports =  p.split("/")[0];
-            }else
-            {
-                ips = a.split("/")[0];
-                ports = "80";
-            }
+            String ips = a.split(":")[0];
+            String p = a.split(":")[1];
+            String ports = p.split("/")[0];
             // String content =
             // "http://10.169.77.131:8082/sva/version/APK/QRcode.jpg";
 
@@ -238,18 +229,9 @@ public class DownController
             // http://10.169.77.131:8081/sva/down/api/generrateQrcode
 
             String a = url.split("//")[1];
-            String ips = null;
-            String p = null;
-            String ports = null;
-            if (a.split(":").length>1) {
-                ips = a.split(":")[0];
-                p = a.split(":")[1];
-                ports =  p.split("/")[0];
-            }else
-            {
-                ips = a.split("/")[0];
-                ports = "80";
-            }
+            String ips = a.split(":")[0];
+            String p = a.split(":")[1];
+            String ports = p.split("/")[0];
             // String content =
             // "http://10.169.77.131:8082/sva/version/APK/QRcode.jpg";
 
@@ -356,7 +338,6 @@ public class DownController
                     .getRealPath("/WEB-INF/upload");
             String QRcodePath4 = request.getSession().getServletContext()
                     .getRealPath("/WEB-INF/upload");
-            log.debug("allqrcode path:"+QRcodePath);
             // int port = request.getLocalPort();
 
             // InetAddress ia=null;
@@ -365,19 +346,9 @@ public class DownController
             // http://10.169.77.131:8081/sva/down/api/generrateQrcode
 
             String a = url.split("//")[1];
-            String ips = null;
-            String p = null;
-            String ports = null;
-            if (a.split(":").length>1) {
-                ips = a.split(":")[0];
-                p = a.split(":")[1];
-                ports =  p.split("/")[0];
-            }else
-            {
-                ips = a.split("/")[0];
-                ports = "80";
-            }
-
+            String ips = a.split(":")[0];
+            String p = a.split(":")[1];
+            String ports = p.split("/")[0];
             // String content =
             // "http://10.169.77.131:8082/sva/version/APK/QRcode.jpg";
 
@@ -497,7 +468,7 @@ public class DownController
             {
                 content4 = "No File3";
             }
-            log.debug("allqrcode content:"+content +" "+content3+" "+content4);
+
             @SuppressWarnings("rawtypes")
             Map hints = new HashMap(2);
             @SuppressWarnings("rawtypes")
@@ -515,6 +486,7 @@ public class DownController
                     BarcodeFormat.QR_CODE, 200, 200, hints3);
             BitMatrix bitMatrix4 = multiFormatWriter4.encode(content4,
                     BarcodeFormat.QR_CODE, 200, 200, hints4);
+
             File file1 = new File(QRcodePath, "QRcode2.jpg");
             MatrixToImageWriter.writeToFile(bitMatrix, "jpg", file1);
 
@@ -575,18 +547,9 @@ public class DownController
             // http://10.169.77.131:8081/sva/down/api/generrateQrcode
             
             String a = url.split("//")[1];
-            String ips = null;
-            String p = null;
-            String ports = null;
-            if (a.split(":").length>1) {
-                ips = a.split(":")[0];
-                p = a.split(":")[1];
-                ports =  p.split("/")[0];
-            }else
-            {
-                ips = a.split("/")[0];
-                ports = "80";
-            }
+            String ips = a.split(":")[0];
+            String p = a.split(":")[1];
+            String ports = p.split("/")[0];
             // String content =
             // "http://10.169.77.131:8082/sva/version/APK/QRcode.jpg";
             

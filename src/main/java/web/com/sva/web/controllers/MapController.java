@@ -212,13 +212,14 @@ public class MapController
                 {
                     BufferedImage sourceImg = javax.imageio.ImageIO.read(file
                             .getInputStream());
+                    file.transferTo(targetFile);
+
                     mapMngModel.setImgWidth(sourceImg.getWidth());
                     mapMngModel.setImgHeight(sourceImg.getHeight());
-                    file.transferTo(targetFile);
                 }
                 catch (Exception e)
                 {
-                    Logger.getLogger(MapController.class).error(e.getMessage());
+                    Logger.getLogger(MapController.class).info(e.getMessage());
                 }
             }
 

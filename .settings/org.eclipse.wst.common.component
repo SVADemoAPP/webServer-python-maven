@@ -6,8 +6,8 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java/model"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java/common"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java/web"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java/service"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/resources"/>
         <property name="context-root" value="SVAProject"/>
         <property name="java-output-path" value="/SVAProject/target/classes"/>
         <property name="context-root" value="SVAProject"/>

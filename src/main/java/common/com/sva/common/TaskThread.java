@@ -168,14 +168,6 @@ class TaskThread extends Thread
                 HttpUtil capi = new HttpUtil();
                 String token = capi.httpsPost(url, content, charset);
                 sva.setToken(token);
-                String idTypes = sva.getIdType();
-                String ips = null;
-                if (("MAC").equals(idTypes)) {
-                    ips = "C01ADA2E2BC0";
-                }
-                if ("IP".equals(idTypes)) {
-                    ips = ConvertUtil.convertMacOrIp("10.10.10.10");
-                }
                 if (sva.getType() == 0)
                 {
                     url = "https://" + sva.getIp() + ":" + sva.getTokenProt()
@@ -198,7 +190,7 @@ class TaskThread extends Thread
                     content = "{\"APPID\":\"" + sva.getUsername()
                     		+ "\",\"idType\":\"" + sva.getIdType()
                             + "\",\"useridlist\":[\""
-                            + ips
+                            + ConvertUtil.convertMacOrIp("10.10.10.10")
                             + "\"]}";
                 }
 

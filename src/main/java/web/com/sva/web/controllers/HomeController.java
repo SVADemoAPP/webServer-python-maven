@@ -300,21 +300,6 @@ public class HomeController
         model.addAttribute("locationdelay", true);
         return "home/locationdelay";
     }
-    
-    /** 
-     * @Title: showFeatureBase 
-     * @Description: 特征库下载页面
-     * @param model
-     * @return 
-     */
-    @AuthPassport
-    @RequestMapping(value = "/showFeatureBase", method = {RequestMethod.GET})
-    public String showFeatureBase(Model model)
-    {
-        model.addAttribute("locTest", true);
-        model.addAttribute("featureBase", true);
-        return "home/featureBase";
-    }
 
     @AuthPassport
     @RequestMapping(value = "/showPhone", method = {RequestMethod.GET})
@@ -448,6 +433,7 @@ public class HomeController
     return "home/contentshowJing";
     }
     
+    @AuthPassport
     @RequestMapping(value = "/content2", method = {RequestMethod.GET})
     public String Contentshow2 (Model model)
     {

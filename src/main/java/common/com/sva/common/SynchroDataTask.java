@@ -32,10 +32,8 @@ public class SynchroDataTask
 
     public void init()
     {
-//        String path = getClass().getResource("/").getPath();
-//        path = path.substring(1, path.indexOf("/classes"));
-        String path = System.getProperty("user.dir");
-        path = path.substring(0, path.indexOf("bin"))+"webapps/SVAProject/WEB-INF";
+        String path = getClass().getResource("/").getPath();
+        path = path.substring(1, path.indexOf("/classes"));
         pythonPath = path;
         InputStream in = getClass().getClassLoader().getResourceAsStream(
                 "sva.properties");
@@ -68,7 +66,7 @@ public class SynchroDataTask
             dir = "/" + dir;
             pythonPath = "/" + pythonPath + "/cpp/GetLocationData";
         }
-        System.out.println(pythonPath);
+
         for (int i = 0; i < 1; i++)
         {
             Collection<SvaModel> list = svaDao.doqueryByAll();

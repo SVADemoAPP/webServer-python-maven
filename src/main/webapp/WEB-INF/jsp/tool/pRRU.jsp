@@ -103,43 +103,31 @@
                       <div class="row-fluid">
                               <div></div>
                        </div>            
-		             <div class="row-fluid">
-		              <div class="span12" style="outline:0px solid #E6E4E4;padding:20px 0;">
-		                   <div class="control-group">
-		                        <label class="control-label" for=placeSel><spring:message code="store_add_name" /></label>
-		                          <div class="controls">
-		                             <select style="width: 59%;height: 15%;"datatype="*"  nullmsg='<spring:message code="map_store_name" />' name="placeId" id="placeSel" >
-		                                <option value=" "></option>
-		                             </select>
-		                          </div>
-		                   </div>
-		                   <div class="control-group">
-		                        <label class="control-label" for="zSel"><spring:message code="message_table_title_floor" /></label>
-		                          <div class="controls">
-		                             <select style="width: 59%;height: 15%;" datatype="*"  nullmsg='<spring:message code="map_place_name" />'  name="floor" id="zSel" >
-		                                <option value=" "></option>
-		                             </select>
-		                          </div>
-		                   </div>
-		                    <div class="control-group">
-		                        <label class="control-label" for="kValue">K值</label>
-		                          <div class="controls">
-		                          	<input datatype="sn" name ="kValue" id="kValue" value='200' errormsg="该值只能为正整数" nullmsg="该值不能为空">
-		                          </div>
-		                   </div>
-            	           <div class="control-group">
-		                        <label class="control-label" for="height">PRRU高度</label>
-		                          <div class="controls">
-		                          	<input datatype="sn" name ="height" id="height" value='5' errormsg="该值只能为正整数" nullmsg="该值不能为空">
-		                          </div>
-		                   </div>
-		                    <div class="control-group">
-		                        <div class="controls">
-		                            <input type="hidden" name ="floorNo" id="idid" style="width: 56%; height: 15%;">
-		                       </div>
-		                     </div>                       
-		                  </div>
-	                 </div>
+             <div class="row-fluid">
+              <div class="span12" style="outline:0px solid #E6E4E4;padding:20px 0;">
+                   <div class="control-group">
+                        <label class="control-label" for=placeSel><spring:message code="store_add_name" /></label>
+                          <div class="controls">
+                             <select style="width: 59%;height: 15%;"datatype="*"  nullmsg='<spring:message code="map_store_name" />' name="placeId" id="placeSel" >
+                                <option value=" "></option>
+                             </select>
+                          </div>
+                   </div>
+                   <div class="control-group">
+                        <label class="control-label" for="zSel"><spring:message code="message_table_title_floor" /></label>
+                          <div class="controls">
+                             <select style="width: 59%;height: 15%;" datatype="*"  nullmsg='<spring:message code="map_place_name" />'  name="floor" id="zSel" >
+                                <option value=" "></option>
+                             </select>
+                          </div>
+                   </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <input type="hidden" name ="floorNo" id="idid" style="width: 56%; height: 15%;">
+                       </div>
+                     </div>                       
+                  </div>
+                 </div>
                 </div>
                 <div class="span6" style="padding:10px;">
                    <div class="row-fluid">
@@ -148,24 +136,12 @@
                   <div class="row-fluid">
                       <div class="span12" style="outline:0px solid #E6E4E4;padding:50px 0;">
                    <div class="control-group">
-                        <label class="control-label" for="defaultDistance">模拟点间距</label>
+                        <label class="control-label" for="pictrueId"><spring:message code="tools_pRRU_wenjian" /></label>
                           <div class="controls">
-                          	<input datatype="sn" name ="defaultDistance" id="defaultDistance" value='5' errormsg="该值只能为正整数" nullmsg="该值不能为空">
+                            <input type='text' errormsg='<spring:message code="tools_pRRU_tishi" />' nullmsg='<spring:message code="tools_pRRU_tishi" />' datatype="xml"  name='textfield' id='textfield' disabled="disabled"   style="width:20%;margin: auto;" /> 
+                            <input type='button' onclick="clickFile()" class='btn' value='<spring:message code="tools_pRRU_wenjian" />' style="width: 36%;margin-left: -1%"/>
+                            <input type="file" name="file" class="file hide" id="fileField"  onchange="fileValue(this)"/>                          
                           </div>
-                   </div>
-                   <div class="control-group">
-                        <label class="control-label" for="defaultDistance">渗透距离</label>
-                          <div class="controls">
-                          	<input datatype="sn" name ="infiltration" id="infiltration" value='20' errormsg="该值只能为正整数" nullmsg="该值不能为空">
-                          </div>
-                   </div>
-                   <div class="control-group">
-	                   <label class="control-label" for="pictrueId"><spring:message code="tools_pRRU_wenjian" /></label>
-	                   <div class="controls">
-		                   <input type='text' errormsg='<spring:message code="tools_pRRU_tishi" />' nullmsg='<spring:message code="tools_pRRU_tishi" />' datatype="xml"  name='textfield' id='textfield' disabled="disabled"   style="width:20%;margin: auto;" /> 
-		                   <input type='button' onclick="clickFile()" class='btn' value='<spring:message code="tools_pRRU_wenjian" />' style="width: 36%;margin-left: -1%"/>
-		                   <input type="file" name="file" class="file hide" id="fileField"  onchange="fileValue(this)"/>                          
-	                   </div>
                    </div>
 
                   </div>
@@ -303,7 +279,6 @@
     	  validForm = $(".demoform").Validform({
         	  tiptype:3,
               datatype:{
-            			"sn":/^[1-9]\d*$/,
                         "xml":function(gets,obj,curform,regxp){
                         	  if(gets=="")
                         		{

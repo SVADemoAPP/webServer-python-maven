@@ -1,6 +1,5 @@
 package com.sva.web.auth;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -54,17 +53,14 @@ public class AuthInterceptor extends HandlerInterceptorAdapter
                 // 在这里实现自己的权限验证逻辑
                 String username = (String) (request.getSession()
                         .getAttribute("username"));
+				@SuppressWarnings("unchecked")
+				List<String> menuList = (List<String>)request.getSession().getAttribute("menu");
+                
+                String url = request.getRequestURI();
+                String menuKey = menuMap.get(url.substring(url.lastIndexOf("/") + 1));
                 if (username != null && (!"".equals(username)))
                 {
-                    @SuppressWarnings("unchecked")
-                    List<String> menuList = (List<String>) request.getSession().getAttribute("menu");
-                    String url = request.getRequestURI();
-                    String menuKey = menuMap.get(url.substring(url.lastIndexOf("/") + 1));
-                    boolean isTrue = false;
-                    if (menuKey!=null) {
-                         isTrue = menuList.get(0).contains(menuKey);
-                    }
-                	if(StringUtils.isEmpty(menuKey) || menuList.contains("all") || menuList.contains(menuKey)|| isTrue){
+                	if(StringUtils.isEmpty(menuKey) || menuList.contains("all") || menuList.contains(menuKey)){
                 		return true;
                     }else {
                     	//TODO

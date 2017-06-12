@@ -41,24 +41,20 @@ class GetSvaData():
             while True:
                 timestamp = int(time.time())* 1000
                 print timestamp
-                userId = "C0A80A66"
-                message1 = "{\"networkinfo\":[{\"userid\":\""+str(userId)+"\",\"infotype\":\"ransignal\",\"lampsiteinfo\":{\"enbid\":\"509146\",\"prrusignal\":[{\"gpp\":\"0_2_1\",\"rsrp\":\"-1100\"},{\"gpp\":\"0_2_2\",\"rsrp\":\"-1000\"},{\"gpp\":\"0_2_3\",\"rsrp\":\"-1300\"},{\"gpp\":\"0_2_4\",\"rsrp\":\"-1100\"},{\"gpp\":\"0_2_5\",\"rsrp\":\"-900\"},{\"gpp\":\"0_2_6\",\"rsrp\":\"-1300\"}]},\"timestamp\":"+str(timestamp)+"}]}"
-                message2 = "{\"networkinfo\":[{\"userid\":\""+str(userId)+"\",\"infotype\":\"ransignal\",\"lampsiteinfo\":{\"enbid\":\"509146\",\"prrusignal\":[{\"gpp\":\"0_2_2\",\"rsrp\":\"-1400\"},{\"gpp\":\"0_2_3\",\"rsrp\":\"-1100\"},{\"gpp\":\"0_2_5\",\"rsrp\":\"-1000\"},{\"gpp\":\"0_2_6\",\"rsrp\":\"-1350\"},{\"gpp\":\"0_2_7\",\"rsrp\":\"-1500\"},{\"gpp\":\"0_2_8\",\"rsrp\":\"-1100\"}]},\"timestamp\":"+str(timestamp)+"}]}"
-                message3 = "{\"networkinfo\":[{\"userid\":\""+str(userId)+"\",\"infotype\":\"ransignal\",\"lampsiteinfo\":{\"enbid\":\"509146\",\"prrusignal\":[{\"gpp\":\"0_2_2\",\"rsrp\":\"-1100\"},{\"gpp\":\"0_2_3\",\"rsrp\":\"-900\"},{\"gpp\":\"0_2_4\",\"rsrp\":\"-1600\"},{\"gpp\":\"0_2_5\",\"rsrp\":\"-800\"},{\"gpp\":\"0_2_6\",\"rsrp\":\"-1360\"},{\"gpp\":\"0_2_7\",\"rsrp\":\"-1100\"}]},\"timestamp\":"+str(timestamp)+"}]}"
-                message4 = "{\"networkinfo\":[{\"userid\":\""+str(userId)+"\",\"infotype\":\"ransignal\",\"lampsiteinfo\":{\"enbid\":\"509146\",\"prrusignal\":[{\"gpp\":\"0_2_2\",\"rsrp\":\"-1400\"},{\"gpp\":\"0_2_3\",\"rsrp\":\"-1500\"},{\"gpp\":\"0_2_4\",\"rsrp\":\"-1500\"},{\"gpp\":\"0_2_5\",\"rsrp\":\"-1400\"},{\"gpp\":\"0_2_6\",\"rsrp\":\"-1400\"}]},\"timestamp\":"+str(timestamp)+"}]}"
-                message5 = "{\"networkinfo\":[{\"userid\":\""+str(userId)+"\",\"infotype\":\"ransignal\",\"lampsiteinfo\":{\"enbid\":\"509146\",\"prrusignal\":[{\"gpp\":\"0_2_1\",\"rsrp\":\"-900\"},{\"gpp\":\"0_2_2\",\"rsrp\":\"-1100\"},{\"gpp\":\"0_2_3\",\"rsrp\":\"-1300\"},{\"gpp\":\"0_2_4\",\"rsrp\":\"-1100\"},{\"gpp\":\"0_2_5\",\"rsrp\":\"-1400\"},{\"gpp\":\"0_2_6\",\"rsrp\":\"-1360\"}]},\"timestamp\":"+str(timestamp)+"}]}"
-                message6 = "{\"networkinfo\":[{\"userid\":\""+str(userId)+"\",\"infotype\":\"ransignal\",\"lampsiteinfo\":{\"enbid\":\"509146\",\"prrusignal\":[{\"gpp\":\"0_2_1\",\"rsrp\":\"-900\"},{\"gpp\":\"0_2_3\",\"rsrp\":\"-1100\"},{\"gpp\":\"0_2_4\",\"rsrp\":\"-800\"},{\"gpp\":\"0_2_5\",\"rsrp\":\"-1200\"},{\"gpp\":\"0_2_6\",\"rsrp\":\"-1400\"},{\"gpp\":\"0_2_7\",\"rsrp\":\"-1100\"}]},\"timestamp\":"+str(timestamp)+"}]}"
-                messageList = [message1,message2,message3,message4,message5,message6]
-                count = random.randint(0, 5)
-                message = messageList[count]
+                arrPhone = [15680067296,13838792076,13661999904,17199916700,18381335216,13540465828,13838330007]
+                message = "{\"locationstreamanonymous\":[{\"IdType\":\"IP\",\"Timestamp\":"+str(timestamp)+",\"datatype\":\"coordinates\",\"location\":{\"x\":1133.0,\"y\":492.0,\"z\":3},\"userid\":[\"0a26d23d\"]}"
                 #print message
-                
+                for i in range(7):
+                    x = random.randint(300, 400)
+                    y = random.randint(350, 520)
+                    message = message + ',{"IdType":"MSISDN","Timestamp":'+str(timestamp)+',"datatype":"coordinates","location":{"x":'+str(x)+',"y":'+str(y)+',"z":7},"userid":["'+str(arrPhone[i])+'"]}'
+                message = message + "]}"
                 #message = '{"geofencing":[{"IdType": "IP", "userid": ["bea80202"], "mapid": 2, "zoneid": 0, "zone_event": "exit", "Timestamp":1461054031000}]}'
                 #{"locationstream":[{"IdType":"IP","Timestamp":1427560872000,"datatype":"coordinates","location":{"x":1133.0,"y":492.0,"z":1},"userid":["0a26d23d"]}]}
                 try:             
                     print message
                     jsonData = json.loads(message)
-                    conn=MySQLdb.connect(host='127.0.0.1',user='root',passwd='123456',port=3306)
+                    conn=MySQLdb.connect(host='127.0.0.1',user='root',passwd='123456',port=3307)
                     cursor = conn.cursor()   
                     conn.select_db('sva')
                     if jsonData.keys()[0] == 'locationstream':
@@ -131,17 +127,13 @@ class GetSvaData():
                                 cursor.execute("insert into location"+dataStr+" (IdType,Timestamp,time_begin,time_local,loc_count,during,datatype,x,y,z,userid) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",sqlparam)
                             #cursor.execute("insert into location"+dataStr+" (IdType,Timestamp,datatype,x,y,z,userid) values (%s,%s,%s,%s,%s,%s,%s)",sqlparam)
                     if jsonData.keys()[0] == 'networkinfo':
-                        print "in"
-                        time_local = time.time() * 1000
-                        userid = jsonData["networkinfo"][0]["userid"]
-                        enbid = jsonData["networkinfo"][0]["lampsiteinfo"]["enbid"]
                         jsonList = jsonData["networkinfo"][0]["lampsiteinfo"]["prrusignal"]
                         for index in range(len(jsonList)):                            
                             gpp = jsonList[index]["gpp"]
                             rsrp = jsonList[index]["rsrp"]                   
-                            sqlparam = [userid,enbid,gpp,rsrp,time_local]   
+                            sqlparam = [gpp,self.brokeip,rsrp]                       
                             print sqlparam
-                            cursor.execute("insert into prrusignal (userId,enbid,gpp,rsrp,timestamp) values (%s,%s,%s,%s,%s)",sqlparam)
+                            cursor.execute("replace into prrusignal (gpp,svaIp,rsrp) values (%s,%s,%s)",sqlparam)
                     if jsonData.keys()[0] == 'geofencing':
                         jsonList = jsonData["geofencing"]
                         for index in range(len(jsonList)):                            

@@ -7,8 +7,6 @@ public class LocationModel
     private String idType;
 
     private BigDecimal timestamp;
-    
-    private BigDecimal timestampPrru;
 
     private String dataType;
 
@@ -27,21 +25,6 @@ public class LocationModel
     private String yo;
 
     private String scale;
-    
-
-    /**
-     * @return the timestampPrru
-     */
-    public BigDecimal getTimestampPrru() {
-        return timestampPrru;
-    }
-
-    /**
-     * @param timestampPrru the timestampPrru to set
-     */
-    public void setTimestampPrru(BigDecimal timestampPrru) {
-        this.timestampPrru = timestampPrru;
-    }
 
     public String getXo()
     {

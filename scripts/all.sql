@@ -433,6 +433,7 @@ INSERT INTO `menuenglish` (`id`, `keyEN`, `name`) VALUES
 	(5, 'key_sellerInfo', 'Seller Management'),
 	(6, 'key_areaCategory', ' Regional category management '),
 	(7, 'key_areaInfo', 'Regional information input'),
+	(8, 'key_customerHeamap', 'Customer Heatmap'),
 	(9, 'key_customerPeriodHeamap', 'Customer Heatmap in Period'),
 	(10,'key_customerScattermap', 'Customer Scattermap'),
 	(11,'key_historicalTrack', 'Historical Track'),
@@ -448,6 +449,7 @@ INSERT INTO `menuenglish` (`id`, `keyEN`, `name`) VALUES
 	(21, 'key_role', 'Role management'),
 	(22, 'key_paramConfig', 'Parameter configuration '),
 	(23, 'key_account', 'Rights management'),
+	(24, 'key_allShow', 'Global overview'),
 	(25, 'key_dynamicAccuyacy', 'Dynamic accuracy test'),
 	(26, 'key_staticAccuyacy', 'Static accuracy test'),
 	(27, 'key_positionlatency', ' Position latency'),
@@ -474,6 +476,7 @@ INSERT INTO `menuname` (`id`, `keyZH`, `name`) VALUES
 	(5, 'key_sellerInfo', '商户信息管理'),
 	(6, 'key_areaCategory', '区域类别管理'),
 	(7, 'key_areaInfo', '区域信息录入'),
+	(8, 'key_customerHeamap', '客流实时热力图'),
 	(9, 'key_customerPeriodHeamap', '时间段客流热力图'),
 	(10, 'key_customerScattermap', '客流实时散点图'),
 	(11, 'key_historicalTrack', '历史轨迹'),
@@ -489,6 +492,7 @@ INSERT INTO `menuname` (`id`, `keyZH`, `name`) VALUES
 	(21, 'key_role', '角色管理'),
 	(22, 'key_account', '权限管理'),
 	(23, 'key_paramConfig', '参数配置'),
+	(24, 'key_allShow', '全局概览'),
 	(25, 'key_dynamicAccuyacy', '动态精度测试'),
 	(26, 'key_staticAccuyacy', '静态精度测试'),
 	(27, 'key_positionlatency', '定位延时'),
@@ -639,8 +643,7 @@ CREATE TABLE IF NOT EXISTS `phonenumber` (
 
 
 -- 导出  表 sva.prru 结构
-DROP TABLE IF EXISTS `prru`;
-CREATE TABLE `prru` (
+CREATE TABLE IF NOT EXISTS `prru` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `pRRUid` varchar(100) DEFAULT NULL,
   `name` varchar(100) DEFAULT NULL,
@@ -649,14 +652,12 @@ CREATE TABLE `prru` (
   `floorNo` decimal(10,2) DEFAULT NULL,
   `placeId` int(11) DEFAULT NULL,
   `neCode` varchar(50) DEFAULT NULL,
-  `eNodeBid` varchar(10) DEFAULT NULL,
-  `cellId` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_prru_maps` (`floorNo`),
   KEY `FK_prru_store` (`placeId`),
   CONSTRAINT `FK_prru_maps` FOREIGN KEY (`floorNo`) REFERENCES `maps` (`floorNo`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_prru_store` FOREIGN KEY (`placeId`) REFERENCES `store` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=211 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- 正在导出表  sva.prru 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `prru` DISABLE KEYS */;
@@ -664,19 +665,12 @@ CREATE TABLE `prru` (
 
 
 -- 导出  表 sva.prrusignal 结构
-CREATE TABLE `prrusignal` (
-	`id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
-	`gpp` VARCHAR(50) NULL DEFAULT NULL COMMENT '柜框槽号' COLLATE 'utf8_unicode_ci',
-	`rsrp` DECIMAL(10,2) NULL DEFAULT NULL COMMENT '信号值',
-	`userId` VARCHAR(50) NULL DEFAULT NULL COMMENT '用户id' COLLATE 'utf8_unicode_ci',
-	`enbid` VARCHAR(50) NULL DEFAULT NULL COMMENT 'enodeBid' COLLATE 'utf8_unicode_ci',
-	`timestamp` BIGINT(20) NULL DEFAULT NULL COMMENT '插入时间戳',
-	PRIMARY KEY (`id`)
-)
-COMMENT='prru信号数据'
-COLLATE='utf8_unicode_ci'
-ENGINE=InnoDB
-AUTO_INCREMENT=62318;
+CREATE TABLE IF NOT EXISTS `prrusignal` (
+  `id` int(11) NOT NULL,
+  `gpp` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `rsrp` decimal(10,2) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- 正在导出表  sva.prrusignal 的数据：~0 rows (大约)
 /*!40000 ALTER TABLE `prrusignal` DISABLE KEYS */;
@@ -739,12 +733,12 @@ CREATE TABLE IF NOT EXISTS `staticaccuracy` (
   `destination` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `start_date` datetime NOT NULL,
   `end_date` datetime NOT NULL,
-  `avgeOffset` decimal(10,2) NOT NULL,
+  `avgeOffset` decimal(10,0) NOT NULL,
   `maxOffset` decimal(10,2) NOT NULL,
   `staicAccuracy` decimal(10,2) NOT NULL,
   `offsetCenter` decimal(10,2) NOT NULL,
   `offsetNumber` decimal(10,2) NOT NULL,
-  `stability` decimal(10,2) NOT NULL,
+  `stability` decimal(10,0) NOT NULL,
   `count_3` int(11) NOT NULL,
   `count_5` int(11) NOT NULL,
   `count_10` int(11) NOT NULL,
@@ -980,95 +974,6 @@ COLLATE='latin1_swedish_ci'
 ENGINE=InnoDB;
 
 
-DROP TABLE IF EXISTS `prrufeature`;
-CREATE TABLE `prrufeature` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
-  `x` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT 'x坐标（米）',
-  `y` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT 'y坐标（米）',
-  `floorNo` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '楼层id',
-  `checkValue` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '校验值',
-  `featureRadius` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '特征半径',
-  `userId` varchar(50) NOT NULL DEFAULT '0' COMMENT '用户id',
-  `timestamp` bigint(20) NOT NULL DEFAULT '0' COMMENT '插入时间戳',
-  `eNodeBid` varchar(10) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-)
-COMMENT='prru特征库\r\n'
-COLLATE='latin1_swedish_ci'
-ENGINE=InnoDB
-AUTO_INCREMENT=8;
-
-CREATE TABLE `prrufeaturedetail` (
-	`id` INT(11) NOT NULL AUTO_INCREMENT COMMENT '自增id',
-	`featureId` INT(11) NOT NULL DEFAULT '0' COMMENT '外键特征库id',
-	`gpp` VARCHAR(50) NOT NULL DEFAULT '0' COMMENT '柜框槽号',
-	`featureValue` DECIMAL(10,2) NOT NULL DEFAULT '0.00' COMMENT '特征值',
-	PRIMARY KEY (`id`)
-)
-COMMENT='详细的特征值信息'
-COLLATE='latin1_swedish_ci'
-ENGINE=InnoDB
-AUTO_INCREMENT=25;
-
-
-CREATE TABLE `acquisitionpoint` (
-    `id` INT(11) NULL DEFAULT NULL,
-    `floorNo` DECIMAL(10,2) NULL DEFAULT NULL,
-    `x1` DECIMAL(10,0) NULL DEFAULT NULL,
-    `y1` DECIMAL(10,0) NULL DEFAULT NULL,
-    `x2` DECIMAL(10,0) NULL DEFAULT NULL,
-    `y2` DECIMAL(10,0) NULL DEFAULT NULL,
-    `x3` DECIMAL(10,0) NULL DEFAULT NULL,
-    `y3` DECIMAL(10,0) NULL DEFAULT NULL,
-    `x` DECIMAL(10,0) NULL DEFAULT NULL,
-    `y` DECIMAL(10,0) NULL DEFAULT NULL,
-    `gx1` DECIMAL(10,0) NULL DEFAULT NULL,
-    `gy1` DECIMAL(10,0) NULL DEFAULT NULL,
-    `gx2` DECIMAL(10,0) NULL DEFAULT NULL,
-    `gy2` DECIMAL(10,0) NULL DEFAULT NULL,
-    `gx3` DECIMAL(10,0) NULL DEFAULT NULL,
-    `gy3` DECIMAL(10,0) NULL DEFAULT NULL,
-    `gx` DECIMAL(10,0) NULL DEFAULT NULL,
-    `gy` DECIMAL(10,0) NULL DEFAULT NULL,
-    `storeId` INT(11) NULL DEFAULT NULL
-)
-COMMENT='坐标采集点'
-COLLATE='latin1_swedish_ci'
-ENGINE=InnoDB;
-
-
-
-CREATE TABLE `info_register` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `plmn` VARCHAR(200) NOT NULL,
-    `ils_ip` VARCHAR(300) NOT NULL,
-    `ils_url` VARCHAR(300) NOT NULL,
-    INDEX `Index 1` (`id`)
-)
-COLLATE='latin1_swedish_ci'
-ENGINE=InnoDB;
-
-
-
-CREATE TABLE `parkinginformation` (
-    `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `storeId` INT(11) NOT NULL DEFAULT '0',
-    `parkingNumber` INT(11) NOT NULL,
-    `entryTime` BIGINT(20) NULL DEFAULT NULL,
-    `outTime` BIGINT(20) NULL DEFAULT NULL,
-    `plateNumber` VARCHAR(50) NULL DEFAULT NULL COLLATE 'utf8_unicode_ci',
-    `floorNo` DECIMAL(10,2) NOT NULL,
-    `isTrue` INT(11) NOT NULL DEFAULT '0',
-    `userName` VARCHAR(50) NULL DEFAULT NULL,
-    PRIMARY KEY (`floorNo`, `parkingNumber`),
-    INDEX `Index 1` (`id`)
-)
-COMMENT='0:空车位  1：非空车位'
-COLLATE='latin1_swedish_ci'
-ENGINE=InnoDB;
-
-
-
 CREATE TABLE `info_cgi_mapper` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `cgi` VARCHAR(50) NOT NULL DEFAULT '0',
@@ -1081,4 +986,13 @@ COMMENT='获取定位信息表'
 COLLATE='latin1_swedish_ci'
 ENGINE=InnoDB;
 
+CREATE TABLE `info_register` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `plmn` VARCHAR(200) NOT NULL,
+    `ils_ip` VARCHAR(300) NOT NULL,
+    `ils_url` VARCHAR(300) NOT NULL,
+    INDEX `Index 1` (`id`)
+)
+COLLATE='latin1_swedish_ci'
+ENGINE=InnoDB;
 

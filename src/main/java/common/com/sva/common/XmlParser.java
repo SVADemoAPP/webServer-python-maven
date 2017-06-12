@@ -29,7 +29,10 @@ import com.sva.model.PrruModel;
  * 
  * <pre>
  * </pre>
- * wwx283823
+ * 
+ * @author dWX182800
+ * @version iSoftStone VDS V100R001C04 2013-11-4
+ * @since iSoftStone VDS V100R001C04
  */
 public class XmlParser
 {
@@ -77,19 +80,6 @@ public class XmlParser
         }
         @SuppressWarnings("unchecked")
         List<Node> node = root.selectNodes(xPath);
-        //读取比例尺
-        @SuppressWarnings("unchecked")
-        List<Node> scaleNode = root.selectNodes("//Project/Floors/Floor/DrawMap");
-        double scale = 0;
-        String eNodeBid;
-        if (scaleNode==null) {
-            logger.error( "Project/Floors/Floor/DrawMap hasn't node");
-            return null;
-        }else
-        {
-            scale = Double.valueOf((scaleNode.get(0).valueOf('@' + "scale")));
-            eNodeBid = scaleNode.get(0).valueOf('@' + "eNodeBid").trim();
-        }
         List<PrruModel> results = new ArrayList<PrruModel>(10);
         String result = null;
         PrruModel pm = null;
@@ -103,7 +93,6 @@ public class XmlParser
         {
             pm = new PrruModel();
             pm.setPlaceId(plceId);
-            pm.seteNodeBid(eNodeBid);
             for (String value : values)
             {
                 if (node == null)
@@ -112,17 +101,13 @@ public class XmlParser
                     continue;
                 }
                 result = node.get(i).valueOf('@' + value);
-                if (value.equals("cellId"))
-                {
-                    pm.setCellId(result);;
-                }
                 if (value.equals(id))
                 {
                     pm.setNeId(result);
                 }
                 if (value.equals(necode))
                 {
-                    pm.setNeCode(eNodeBid + "__" + result);
+                    pm.setNeCode(result);
                 }
                 if (value.equals(name))
                 {
@@ -130,11 +115,11 @@ public class XmlParser
                 }
                 if (value.equals(x))
                 {
-                    pm.setX(String.valueOf(new java.text.DecimalFormat("#.00").format(Integer.parseInt(result)/scale)));
+                    pm.setX(result);
                 }
                 if (value.equals(y))
                 {
-                    pm.setY(String.valueOf(new java.text.DecimalFormat("#.00").format(Integer.parseInt(result)/scale)));
+                    pm.setY(result);
                 }
                 if (result == null || "".equals(result))
                 {

@@ -51,7 +51,6 @@
 		<property name="locations">  
 			<list>  
 				<value>classpath:db.properties</value>  
-				<value>classpath:sva.properties</value>
 			</list>  
 		</property>  
 	</bean> 	

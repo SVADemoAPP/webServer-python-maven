@@ -111,16 +111,13 @@ class GetSvaData():
                                 cursor.execute("insert into location"+dataStr+" (IdType,Timestamp,time_begin,time_local,loc_count,during,datatype,x,y,z,userid) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",sqlparam)
                             #cursor.execute("insert into location"+dataStr+" (IdType,Timestamp,datatype,x,y,z,userid) values (%s,%s,%s,%s,%s,%s,%s)",sqlparam)
                     if jsonData.keys()[0] == 'networkinfo':
-                        time_local = time.time() * 1000
-                        userid = jsonData["networkinfo"][0]["userid"]
-                        enbid = jsonData["networkinfo"][0]["lampsiteinfo"]["enbid"]
                         jsonList = jsonData["networkinfo"][0]["lampsiteinfo"]["prrusignal"]
                         for index in range(len(jsonList)):                            
                             gpp = jsonList[index]["gpp"]
                             rsrp = jsonList[index]["rsrp"]                   
-                            sqlparam = [userid,enbid,gpp,rsrp,time_local]                       
+                            sqlparam = [gpp,self.brokeip,rsrp]                       
                             LOG.info(sqlparam)
-                            cursor.execute("replace into prrusignal (userId,enbid,gpp,rsrp,timestamp) values (%s,%s,%s,%s,%s)",sqlparam)
+                            cursor.execute("replace into prrusignal (gpp,svaIp,rsrp) values (%s,%s,%s)",sqlparam)
                     if jsonData.keys()[0] == 'geofencing':
                         jsonList = jsonData["geofencing"]
                         for index in range(len(jsonList)):                            
